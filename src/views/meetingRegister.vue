@@ -7,7 +7,7 @@
     <div class="pageForm" v-show="isQuery">
       <van-form validate-first @failed="onFailed" @submit="submit">
         <van-field
-          v-model="form.name"
+          v-model="form.person_name"
           name="name"
           label="姓名"
           label-width="50"
@@ -16,7 +16,7 @@
           :rules="[{ required: true, message: '请输入姓名' }]"
         />
         <van-field
-          v-model="form.phone"
+          v-model="form.person_tel"
           name="name"
           label-width="50"
           label="手机"
@@ -25,7 +25,7 @@
           :rules="[{ patternPhone, message: '请输入手机' }]"
         />
         <van-field
-          v-model="form.company"
+          v-model="form.person_company"
           name="name"
           label-width="50"
           label="公司"
@@ -72,9 +72,10 @@ export default {
       patternPhone: /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/,
       // patternCompany: /^[\u4e00-\u9fa5]{0,4}$/,
       form: {
-        name: '喜洋洋',
-        phone: '15022129966',
-        company: '内径'
+        person_name: '喜洋洋',
+        person_tel: '15022129966',
+        person_company: '内径',
+        meeting_id: 'ef951fe6d3904b9eaad391470d08e20e'
       }
     }
   },
