@@ -1,0 +1,36 @@
+.authList {
+    .van-nav-bar .van-icon{
+        // color:#5976B9
+        color:#1989fa;
+    }
+    .van-nav-bar__text{
+        // color:#5976B9
+        color:#1989fa;
+    }
+    .van-nav-bar__title{
+        font-weight: bold;
+    }
+    .yzmFiled::v-deep .van-button--primary{
+        color:#C6A971;
+        background-color: #ffffff;
+        // border: 1px solid #C6A971;
+        border: 1px solid red;
+        border-radius: 5px;
+    }
+    .tips{
+        text-align: left;
+        padding: 20px;
+        line-height: 20px;
+    }
+    .tips p{
+        padding: 0;
+        margin: 0;
+    }
+    .tips p:first-child{
+        line-height: 30px;
+    font-size: 14px;
+    }
+    // .authBox{
+    //   padding-top:10px;
+    // }
+}
