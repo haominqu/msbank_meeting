@@ -7,13 +7,13 @@
     <div class="pageForm" v-show="isQuery">
       <van-form @failed="onFailed" @submit="onSubmit">
         <van-field
-          v-model="form.phone"
+          v-model="form.person_phone"
           name="name"
           label-width="50"
           label="手机"
           type="number"
           maxlength="11"
-          placeholder="请输入手机"
+          placeholder="请输入手机号码"
           :rules="[{ pattern:patternPhone,required: true, message: '请输入正确的手机号码' }]"
         />
         <div class="tip">请输入预登记时填写的手机号</div>
@@ -22,24 +22,22 @@
         </div>
         <div @click="register()" class="dj">去登记</div>
       </van-form>
-      <!-- <div class="qrcode" ref="qrCodeUrl"></div> -->
     </div>
     <div class="queryNull" v-show="!isQuery">
       <!-- 查询失败 -->
-      <!-- <div>
+      <div v-show="isFail">
         <div class="nullText" style="margin-top:64px">该手机号未登记！</div>
         <div class="nullText" style="margin-bottom:52px">请重新输入</div>
         <div style="margin: 16px;">
           <van-button round block type="info" class="submitBtn" @click="returnPage">返回</van-button>
         </div>
-      </div> -->
+      </div>
       <!-- 查询成功 -->
-      <div class="searchYes">
-        <div class="qrcode" ref="qrCodeUrl"></div>
+      <div class="searchYes" v-show="isSuccess">
+        <img :src="codeSrc" alt="">
         <div class="submitYes">提交成功</div>
         <div class="submitTip">请长按保存 ，入场时出示可快速扫码入场</div>
       </div>
-      
     </div>
     <div class="footer">
       <div>
@@ -52,66 +50,50 @@
     </div>
   </div>
 </template>
-
 <script>
-import QRCode from 'qrcodejs2'
-import { meetingSignin } from '../assets/libs/service/request'
+import { meetingsearch } from '../assets/libs/service/request'
+import envConfig from '../assets/env.json'
 export default {
   name: 'index',
-
   data() {
     return {
+      isFail: false,
+      isSuccess: false,
       isQuery: true,
       patternPhone: /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/,
       form: {
-        phone: '15022129940'
-      }
+        person_phone: ''
+      },
+      codeSrc: '',
+      baseUrl: ''
     }
   },
-  computed: {
-   
-  },
-  beforeMount() {
-   
-  },
+  computed: { },
+  beforeMount() {},
   mounted() {
-      var qrcode = new QRCode(this.$refs.qrCodeUrl, {
-        text: 'd', // 需要转换为二维码的内容
-        width: 160,
-        height: 160,
-        colorDark: '#000000',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-      })
+    this.baseUrl = envConfig.env.dev
   },
   methods: {
     onFailed(errorInfo) {
       console.log('failed', errorInfo);
-
       // 二维码
-      
     },
     returnPage(){
       this.isQuery = true
     },
     onSubmit(val) {
-      console.log('submit', val);
-      this.isQuery = false
-      meetingSignin(this.form).then(data => {
-        console.log(data,'')
-        if(data){
-          
+      meetingsearch(this.form).then(data => {
+        this.isQuery = false
+        if(data.result){
+          this.isSuccess = true
+          this.isFail = false
+          this.codeSrc = this.baseUrl + data.data.person_qrcode
+        } else {
+          this.form.person_phone = ''
+          this.isFail = true
+          this.isSuccess = false
         }
       }).catch()
-      // 调查询接口
-      // this.$service.callService('claimSubmit',this.form).then(res => {
-      //   Dialog.alert({
-      //     title: '提交成功',
-      //     message: '您的理赔资料已提交完成，我们会尽快处理您的申请',
-      //   }).then(() => {
-      //     location.reload()
-      //   })
-      // })
     },
     register(){
       this.$router.push({
@@ -119,15 +101,18 @@ export default {
         query: { }
       })
     }
-  },
-  watch:{
-    
   }
 }
 </script>
-
 <style scoped lang="less">
   .searchYes {
+    img {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto;
+      display: block;
+      margin-top: 10px;
+    }
     .qrcode {
       width: 160px;
       height: 160px;

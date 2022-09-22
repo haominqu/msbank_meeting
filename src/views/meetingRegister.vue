@@ -13,7 +13,7 @@
           label-width="50"
           placeholder="请输入姓名"
           maxlength="20"
-          :rules="[{ required: true, message: '请输入姓名' }]"
+          :rules="[{ required: true, message: '请输入正确的姓名' }]"
         />
         <van-field
           v-model="form.person_tel"
@@ -21,8 +21,8 @@
           label-width="50"
           label="手机"
           maxlength="11"
-          placeholder="请输入手机"
-          :rules="[{ patternPhone, message: '请输入手机' }]"
+          placeholder="请输入手机号码"
+          :rules="[{ patternPhone, message: '请输入正确的手机号码' }]"
         />
         <van-field
           v-model="form.person_company"
@@ -37,11 +37,10 @@
           <van-button round block type="info" native-type="submit" class="submitBtn">提交</van-button>
         </div>
       </van-form>
-      <!-- <div class="qrcode" ref="qrCodeUrl"></div> -->
     </div>
     <div class="queryNull" v-show="!isQuery">
       <div class="searchYes">
-        <div class="qrcode" ref="qrCodeUrl"></div>
+        <img :src="codeSrc" alt="">
         <div class="submitYes">提交成功</div>
         <div class="submitTip">请长按保存 ，入场时出示可快速扫码入场</div>
       </div>
@@ -57,14 +56,13 @@
     </div>
   </div>
 </template>
-
 <script>
 import QRCode from 'qrcodejs2'
 import { meetingSignin } from '../assets/libs/service/request'
-import { Dialog } from 'vant';
+import { Dialog } from 'vant'
+import envConfig from '../assets/env.json'
 export default {
   name: 'index',
-
   data() {
     return {
       isQuery: true,
@@ -72,65 +70,48 @@ export default {
       patternPhone: /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/,
       // patternCompany: /^[\u4e00-\u9fa5]{0,4}$/,
       form: {
-        person_name: '喜洋洋',
-        person_tel: '15022129966',
-        person_company: '内径',
-        meeting_id: 'ef951fe6d3904b9eaad391470d08e20e'
-      }
+        person_name: '',
+        person_tel: '',
+        person_company: '',
+        meeting_id: ''
+      },
+      codeSrc:'',
+      baseUrl: ''
     }
   },
   computed: {
-   
   },
   beforeMount() {
-   
   },
   mounted() {
-      
+    this.baseUrl = envConfig.env.dev
   },
   methods: {
     onFailed(errorInfo) {
-      console.log('failed', errorInfo);
-
-      // 二维码
-      
+      console.log('failed', errorInfo)
     },
     returnPage(){
       this.isQuery = true
     },
     submit() {
+      let geturl = window.location.href 
+      let getqyinfo = geturl.split('?')[1]
+      let getqys = new URLSearchParams('?'+getqyinfo)
+      let getqycode = getqys.get('qycode')
+      this.form.meeting_id = getqys.get('meetingId')
       meetingSignin(this.form).then(data => {
-        console.log(data,'')
-        if(data){
-          
+        if(data.result){
+          this.isQuery = false
+          this.codeSrc = this.baseUrl + data.data.person_qrcode
+        } else {
+          Dialog.alert({
+            title: '提示',
+            message: data.error,
+          }).then(() => {
+            
+          });
         }
       }).catch()
-      // ------成功
-      this.isQuery = false
-      var qrcode = new QRCode(this.$refs.qrCodeUrl, {
-        text: 'd', // 需要转换为二维码的内容
-        width: 150,
-        height: 150,
-        colorDark: '#000000',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-      })
-      // 失败======
-      Dialog.alert({
-        title: '提示',
-        message: '提交失败，重试',
-      }).then(() => {
-        // on close
-      });
-      // 调查询接口
-      // this.$service.callService('claimSubmit',this.form).then(res => {
-      //   Dialog.alert({
-      //     title: '提交成功',
-      //     message: '您的理赔资料已提交完成，我们会尽快处理您的申请',
-      //   }).then(() => {
-      //     location.reload()
-      //   })
-      // })
     },
     register(){
       this.$router.push({
@@ -139,19 +120,16 @@ export default {
       })
     }
   },
-  watch:{
-    
-  }
 }
 </script>
 
 <style scoped lang="less">
-    .searchYes {
-    .qrcode {
+  .searchYes {
+    img {
       width: 160px;
       height: 160px;
       margin: 0 auto;
-      display: -block;
+      display: block;
       margin-top: 10px;
     }
     .submitYes {
@@ -189,7 +167,7 @@ export default {
     text-align: center;
     margin: 20px 20px 0 20px;
   }
-.pageIndex {
+  .pageIndex {
     background-image: url('../assets/image/background.jpg');
     width: 100vw;
     height: 100vh;
@@ -206,7 +184,7 @@ export default {
   }
   .title {
     position: absolute;
-    top: 120px;
+    top: 110px;
     left: calc(50vw - 47px);
   }
   .title img{
@@ -215,7 +193,7 @@ export default {
   }
   .pageForm, .queryNull {
     position: absolute;
-    top: 300px;
+    top: 280px;
     left: 7.6%;
   }
   .footer {

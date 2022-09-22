@@ -66,10 +66,10 @@ function requestInterceptor(context) {
     //     debugger
     // }
     showLoading()
-    const header = getWeixinHeader()
-    if (header) {
-        Object.assign(context.headers, header)
-    }
+    // const header = getWeixinHeader()
+    // if (header) {
+    //     Object.assign(context.headers, header)
+    // }
     // const token = window.sessionStorage.getItem('token') || '123'
     // if(token) {
     //     const NULL_VAL = 'NULL' // 默认空值
@@ -98,25 +98,25 @@ function responseInterceptor(response) {
     hideLoading()
     console.log(response)
     const res = Object.prototype.toString.call(response.data) === '[object String]' ? JSON.parse(response.data) : response.data
-    if(res.result.isSuccess == true){
-        return Promise.resolve(res)
-    } else if (/^5/.test(res.status)) {
-        Dialog({ 
-            message: res.error.message
-         })
-        return Promise.reject(res)
-    } else if (/^4/.test(res.status)) {
-        Dialog({ 
-            message: '客户端报错'
-        })
-        return Promise.reject(res)       
-    } else {
-        Dialog({ 
-            message: res.result.error
-        })
-        return Promise.reject(res)
-    }
-    // return Promise.resolve(res)
+    // if(res.result.isSuccess == true){
+    //     return Promise.resolve(res)
+    // } else if (/^5/.test(res.status)) {
+    //     Dialog({ 
+    //         message: res.error.message
+    //      })
+    //     return Promise.reject(res)
+    // } else if (/^4/.test(res.status)) {
+    //     Dialog({ 
+    //         message: '客户端报错'
+    //     })
+    //     return Promise.reject(res)       
+    // } else {
+    //     Dialog({ 
+    //         message: res.result.error
+    //     })
+    //     return Promise.reject(res)
+    // }
+    return Promise.resolve(res)
     
 }
 // 默认空值
@@ -128,7 +128,7 @@ export function header() {
     if(token) {
         flag = true
         const header = {
-            'Authorization': 'Basic ' + token,
+            'Authorization': '',
             // 'Authorization': 'Bearer ' + SSOToken.getToken('iscl', '814a0b7eb0f82e02246da5e098b6e2b5', 60 * 10),
             'Content-Type': 'application/json',
             'Accept-Device': 'PC', // 设备名称及型号
@@ -136,7 +136,7 @@ export function header() {
             'Accept-Location': NULL_VAL, // 设置位置
             'Accept-ISP': 'wifi', // 网络
             'Accept-StartTime': getYMDHMS(), // 设备启动时间，格式YYYYMMDDHI24MISS
-            'Accept-TimeZone': '28800000', // 时区偏移
+            'Accept-TimeZone': '', // 时区偏移
             'Accept-Attr1': NULL_VAL, // 设备唯一号
             'Accept-Attr2': 'PHONE', // 终端类型（枚举：PAD，PC，PHONE其中一种）
             'Accept-Attr3': 'zh_CN', // 访问的语言Locale（可空，不传NULL），格式为如zh_CN这种
@@ -161,17 +161,15 @@ export function getWeixinHeader() {
     // const key = isProduction() ? '6297391dca6d4090ae60959acb73cda1' : '814a0b7eb0f82e02246da5e098b6e2b5'
     console.log('=key=', key)
     // const commod = commonModule
-    const token = 'eyJhbGciOiJIUzI1NiJ9.eyJ0Z3QiOiJUR1QtMTI3MS1RRnhBRXMxU0ZMRkNWb09mMlRHZXNuYWM2ckp6OUNyZ0haQmtpRWZJTEZCWXJkbFNBZC1jYXMiLCJzdWIiOiI2MDAwNTI3MyIsIm5iZiI6MTU5NDE5MjUwMywiZXhwIjoxNTk0MjM1NzAzLCJ1c2VyaWQiOiI2MDAwNTI3MyIsImlhdCI6MTU5NDE5MjUwMywia2V5IjoiVEdULTEyNzEtUUZ4QUVzMVNGTEZDVm9PZjJUR2VzbmFjNnJKejlDcmdIWkJraUVmSUxGQllyZGxTQWQtY2FzLVJFRCJ9.eaiDS1rwMV4vxhk0DASfHqoOlvLsDcn8x2-SFBnwKiY' // 假的但必须传。TODO 从token获取
     return {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + SSOToken.getToken('iscl', key, 60 * 10),
-    //   'Authorization': 'Basic ' + token,
+      'Authorization': '',
       'Accept-Device': 'PC', // 设备名称及型号
       'Accept-DeviceOS': NULL_VAL, // 设备系统名称及型号
       'Accept-Location': NULL_VAL, // 设置位置
       'Accept-ISP': NULL_VAL, // 网络
       'Accept-StartTime': getYMDHMS(), // 设备启动时间，格式YYYYMMDDHI24MISS
-      'Accept-TimeZone': '28800000', // 时区偏移
+      'Accept-TimeZone': '', // 时区偏移
       'Accept-Attr1': NULL_VAL, // 设备唯一号
       'Accept-Attr2': 'PC', // 终端类型（枚举：PAD，PC，PHONE其中一种）
       'Accept-Attr3': 'zh_CN', // 访问的语言Locale（可空，不传NULL），格式为如zh_CN这种
@@ -200,7 +198,7 @@ export function get(url, params){
         }).then(res => {
             // console.log(res)
             hideLoading()
-            resolve(res.data);
+            resolve(res);
         }).catch(err =>{
             reject(err.data)        
         })    
@@ -216,7 +214,7 @@ export function post(url, params) {
             // }
         })
         .then(res => {
-            resolve(res.data);
+            resolve(res);
         })
         .catch(err =>{
             reject(err.data)
