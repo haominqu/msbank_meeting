@@ -39,7 +39,16 @@ export default {
    
   },
   mounted() {
-      
+    let geturl = window.location.href 
+    let getqyinfo = geturl.split('?')[1]
+    let getqys = new URLSearchParams('?'+getqyinfo)
+    let titleText = getqys.get('title')
+    var title = document.getElementsByTagName("title");
+    if(titleText){
+      title[0].innerHTML = titleText
+    } else {
+      title[0].innerHTML = '高端会议'
+    }
   },
   methods: {
     onFailed(errorInfo) {

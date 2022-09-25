@@ -21,8 +21,9 @@
           label-width="50"
           label="手机"
           maxlength="11"
+          type="number"
           placeholder="请输入手机号码"
-          :rules="[{ patternPhone, message: '请输入正确的手机号码' }]"
+          :rules="[{ patternPhone, required: true,message: '请输入正确的手机号码' }]"
         />
         <van-field
           v-model="form.person_company"
@@ -85,6 +86,17 @@ export default {
   },
   mounted() {
     this.baseUrl = envConfig.env.dev
+
+    let geturl = window.location.href 
+    let getqyinfo = geturl.split('?')[1]
+    let getqys = new URLSearchParams('?'+getqyinfo)
+    let titleText = getqys.get('title')
+    var title = document.getElementsByTagName("title");
+    if(titleText){
+      title[0].innerHTML = titleText
+    } else {
+      title[0].innerHTML = '高端会议'
+    }
   },
   methods: {
     onFailed(errorInfo) {
@@ -170,7 +182,7 @@ export default {
   .pageIndex {
     background-image: url('../assets/image/background.jpg');
     width: 100vw;
-    height: 100vh;
+    height: 700px;
     background-repeat: no-repeat;
     background-size: 100% 100%;
     position: relative;
@@ -199,6 +211,7 @@ export default {
   .footer {
     position: absolute;
     bottom: 0px;
+    // top: 85vh;
     display: flex;
     width: 100%;
     >div:nth-of-type(1) {
@@ -283,8 +296,9 @@ export default {
     border: 1px solid #FFFFFF;
     box-shadow: 0px 12px 24px 0px #A2CAF133;
     margin: 0px auto;
-    height: 250px;
+    // min-height: 250px;
     padding-top: 20px;
+    padding-bottom: 20px;
   }
   .queryNull {
     width: 84.8%;

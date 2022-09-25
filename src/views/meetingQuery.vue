@@ -72,6 +72,18 @@ export default {
   beforeMount() {},
   mounted() {
     this.baseUrl = envConfig.env.dev
+
+    let geturl = window.location.href 
+    let getqyinfo = geturl.split('?')[1]
+    let getqys = new URLSearchParams('?'+getqyinfo)
+    let titleText = getqys.get('title')
+    var title = document.getElementsByTagName("title");
+    if(titleText){
+      title[0].innerHTML = titleText
+    } else {
+      title[0].innerHTML = '高端会议'
+    }
+    
   },
   methods: {
     onFailed(errorInfo) {
@@ -159,7 +171,7 @@ export default {
 .pageIndex {
     background-image: url('../assets/image/background.jpg');
     width: 100vw;
-    height: 100vh;
+    height: 700px;
     background-repeat: no-repeat;
     background-size: 100% 100%;
     position: relative;
